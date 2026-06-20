@@ -23,6 +23,13 @@
     "lyrics",
     "markdown"
   ],
+  "scripts": {
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.2.0"
+  },
   "contributes": {
     "grammars": [
       {

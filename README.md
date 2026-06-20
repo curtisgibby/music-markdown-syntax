@@ -87,6 +87,41 @@ add overrides to your VS Code `settings.json` keyed to the custom scopes:
 }
 ```
 
+## Packaging & publishing
+
+Tooling is [`@vscode/vsce`](https://github.com/microsoft/vscode-vsce) (listed in `devDependencies`).
+
+**Build an installable `.vsix`** (no Marketplace account needed):
+
+```bash
+npm install          # one-time, pulls in vsce
+npm run package      # produces music-markdown-syntax-<version>.vsix
+```
+
+Install that file anywhere via **Extensions panel → ··· → Install from VSIX…**, or:
+
+```bash
+code --install-extension music-markdown-syntax-0.1.0.vsix
+```
+
+**Publish to the VS Code Marketplace** (optional — only if you want it publicly installable):
+
+1. Create a publisher at <https://marketplace.visualstudio.com/manage> (the id must match
+   `"publisher": "curtisgibby"` in `package.json`).
+2. Generate an Azure DevOps Personal Access Token with the **Marketplace → Manage** scope
+   (<https://dev.azure.com> → User settings → Personal access tokens).
+3. Authenticate and publish:
+
+   ```bash
+   npx vsce login curtisgibby   # paste the PAT when prompted
+   npm run publish              # or: npx vsce publish patch|minor|major
+   ```
+
+`vsce` will warn about a missing `icon` and `LICENSE` reference — the license is fine (an MIT
+`LICENSE` file is present); add a 128×128 PNG `icon` field to `package.json` if you want a
+Marketplace tile image. Bump `version` in `package.json` (and add a `CHANGELOG.md` entry) before
+each publish.
+
 ## License
 
 MIT

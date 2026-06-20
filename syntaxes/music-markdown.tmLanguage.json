@@ -1,0 +1,67 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Music Markdown",
+  "scopeName": "music-markdown.injection",
+  "injectionSelector": "L:text.html.markdown",
+  "patterns": [
+    { "include": "#chord-line" },
+    { "include": "#lyric-line" },
+    { "include": "#voice-line" }
+  ],
+  "repository": {
+    "chord-line": {
+      "comment": "A `c:` / `c1:` / `c2:` line. Only the `c` instrument runs chord validation in markdown-it-music.",
+      "begin": "^(c)([0-9]*)(:)(?=\\s)",
+      "beginCaptures": {
+        "1": { "name": "constant.numeric.marker.chord.music-markdown" },
+        "2": { "name": "constant.numeric.marker.chord.music-markdown" },
+        "3": { "name": "constant.numeric.marker.chord.music-markdown" }
+      },
+      "end": "$",
+      "name": "meta.line.chord.music-markdown",
+      "patterns": [
+        { "include": "#annotation" },
+        { "include": "#chord" },
+        { "include": "#invalid-chord" }
+      ]
+    },
+    "lyric-line": {
+      "comment": "An `l:` / `l1:` ... line. Whole remainder is lyric text (raw passthrough in the renderer).",
+      "begin": "^(l)([0-9]*)(:)(?=\\s)",
+      "beginCaptures": {
+        "1": { "name": "keyword.operator.marker.lyric.music-markdown" },
+        "2": { "name": "keyword.operator.marker.lyric.music-markdown" },
+        "3": { "name": "keyword.operator.marker.lyric.music-markdown" }
+      },
+      "end": "$",
+      "name": "meta.line.lyric.music-markdown",
+      "contentName": "string.unquoted.lyric.music-markdown"
+    },
+    "voice-line": {
+      "comment": "Any other generic voice line (t1:, r1:, b1:, ...). markdown-it-music accepts arbitrary lowercase instrument names; content is raw text. Restricted to lowercase here to avoid matching ordinary prose like 'Note: ...'.",
+      "begin": "^([a-z][a-z0-9_-]*)(:)(?=\\s)",
+      "beginCaptures": {
+        "1": { "name": "keyword.operator.marker.voice.music-markdown" },
+        "2": { "name": "keyword.operator.marker.voice.music-markdown" }
+      },
+      "end": "$",
+      "name": "meta.line.voice.music-markdown",
+      "contentName": "string.unquoted.voice.music-markdown"
+    },
+    "chord": {
+      "comment": "Ported verbatim from markdown-it-music@2.0.5 lib/chord.js CHORD_PATTERN. Anchored to whole space-separated tokens via the trailing boundary. N.C. dots escaped to literal (the source leaves them unescaped).",
+      "match": "(?:[CDEFGAB](?:#|b)?|N\\.C\\.)(?:maj|maj7|maj9|maj11|maj13|maj9#11|maj13#11|add9|maj7b5|maj7#5|m|m7|m9|m9/6|m11|m13|m6|madd9|m6add9|m7add9|mmaj7|mmaj9|m7b5|m7#5|5|6|6/9|7|7/6|7sus4|7b5|7#5|7b9|7#9|7b5b9|7b5#9|7#5b9|7b9#5|7aug|7aug5|7aug9|7dim5|7dim9|7sus2|7sus4|9|9/6|9b5|9#5|9aug5|9dim5|9sus|9sus4|11|11b9|11dim9|11aug|13|13#11|13b9|13b9b5|13dim9|13dim11|add2|add4|add9|aug|dim|dim5|dim7|dim11|dim13|sus|sus2|sus4|sus2sus4)?(?:/[CDEFGAB](?:#|b)?)?(?=\\s|$)",
+      "name": "entity.name.function.chord.music-markdown"
+    },
+    "annotation": {
+      "comment": "Ported from markdown-it-music@2.0.5 ANNOTATION_PATTERN: a bar separator | or a (parenthetical).",
+      "match": "(?:\\||\\([^)]+\\))(?=\\s|$)",
+      "name": "comment.line.annotation.music-markdown"
+    },
+    "invalid-chord": {
+      "comment": "Any non-whitespace token on a chord line that is neither a valid chord nor an annotation. Flags typos like 'Gmja7'.",
+      "match": "\\S+",
+      "name": "invalid.illegal.chord.music-markdown"
+    }
+  }
+}
